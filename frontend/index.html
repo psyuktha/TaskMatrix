@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Todo App — Serverless</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app" id="app">
+      <header class="app-header">
+        <div class="brand">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+            <path d="M9 11l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.2" />
+          </svg>
+          <h1>Todo</h1>
+        </div>
+        <p class="subtitle">Simple serverless todo app</p>
+      </header>
+
+      <section class="controls">
+        <form id="todo-form" class="todo-form" aria-label="Add todo">
+          <input id="title" name="title" autocomplete="off" placeholder="What needs doing?" aria-label="New todo title" />
+          <button id="add-btn" type="submit" class="btn-primary">Add</button>
+        </form>
+
+        <div class="filters" role="tablist" aria-label="Filter todos">
+          <button class="filter active" data-filter="all" role="tab">All</button>
+          <button class="filter" data-filter="active" role="tab">Active</button>
+        </div>
+      </section>
+
+      <section class="content">
+        <div id="banner" class="banner" aria-live="polite" hidden></div>
+        <div id="loader" class="loader" aria-hidden="true" hidden></div>
+        <ul id="todos" class="todo-list" aria-live="polite"></ul>
+        <div id="empty" class="empty" hidden>
+          <p>No todos yet — add one above.</p>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <small>Hosted via CloudFront • Backend: API Gateway + Lambda + DynamoDB</small>
+      </footer>
+    </div>
+
+    <template id="todo-template">
+      <li class="todo-item">
+        <!-- completed checkbox removed -->
+        <div class="title-wrap">
+          <span class="title"></span>
+          <input class="title-edit" aria-label="Edit todo" />
+        </div>
+        <div class="actions">
+          <button class="edit" title="Edit">Edit</button>
+          <button class="delete" title="Delete">Delete</button>
+        </div>
+      </li>
+    </template>
+
+    <script src="app.js" defer></script>
+  </body>
+</html>

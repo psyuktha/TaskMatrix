@@ -1,0 +1,134 @@
+service: todo-app
+
+provider:
+  name: aws
+  runtime: python3.9
+  region: us-east-1
+  environment:
+    TODOS_TABLE: ${self:custom.todosTableName}
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:GetItem
+        - dynamodb:Query
+        - dynamodb:Scan
+      Resource:
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.todosTableName}"
+
+functions:
+  createTodo:
+    handler: handler.create_todo
+    events:
+      - http:
+          path: todos
+          method: post
+          cors: true
+
+  listTodos:
+    handler: handler.list_todos
+    events:
+      - http:
+          path: todos
+          method: get
+          cors: true
+
+  updateTodo:
+    handler: handler.update_todo
+    events:
+      - http:
+          path: todos/{id}
+          method: put
+          cors: true
+
+  deleteTodo:
+    handler: handler.delete_todo
+    events:
+      - http:
+          path: todos/{id}
+          method: delete
+          cors: true
+
+custom:
+  todosTableName: TodosTable-${sls:stage}
+
+resources:
+  Resources:
+    TodosTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.todosTableName}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+    WebsiteBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        WebsiteConfiguration:
+          IndexDocument: index.html
+      DeletionPolicy: Retain
+    # CloudFront Origin Access Identity to allow CloudFront to read from S3 privately
+    CloudFrontOAI:
+      Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+      Properties:
+        CloudFrontOriginAccessIdentityConfig:
+          Comment: !Sub "OAI for ${AWS::StackName} website"
+
+    # Bucket policy granting the CloudFront OAI permission to GetObject
+    WebsiteBucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket: !Ref WebsiteBucket
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Sid: GrantCloudFrontAccess
+              Effect: Allow
+              Principal:
+                CanonicalUser: !GetAtt CloudFrontOAI.S3CanonicalUserId
+              Action: 's3:GetObject'
+              Resource:
+                Fn::Join:
+                  - ''
+                  - - Fn::GetAtt: [WebsiteBucket, Arn]
+                    - '/*'
+
+    # CloudFront distribution with S3 origin (private access via OAI)
+    WebsiteDistribution:
+      Type: AWS::CloudFront::Distribution
+      Properties:
+        DistributionConfig:
+          Enabled: true
+          DefaultRootObject: index.html
+          Origins:
+            - Id: S3WebsiteOrigin
+              DomainName: !GetAtt WebsiteBucket.DomainName
+              S3OriginConfig:
+                OriginAccessIdentity: !Sub "origin-access-identity/cloudfront/${CloudFrontOAI}"
+          DefaultCacheBehavior:
+            TargetOriginId: S3WebsiteOrigin
+            ViewerProtocolPolicy: redirect-to-https
+            AllowedMethods:
+              - GET
+              - HEAD
+            CachedMethods:
+              - GET
+              - HEAD
+            ForwardedValues:
+              QueryString: false
+          PriceClass: PriceClass_100
+          ViewerCertificate:
+            CloudFrontDefaultCertificate: true
+
+
+  Outputs:
+    WebsiteBucketName:
+      Description: "Static website bucket name"
+      Value: !Ref WebsiteBucket

@@ -1,0 +1,49 @@
+.root{box-sizing:border-box}
+:root{
+	--bg:#f6f8fb;
+	--card:#ffffff;
+	--muted:#6b7280;
+	--accent:#2563eb;
+	--danger:#ef4444;
+	--radius:10px;
+}
+*{box-sizing:inherit}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:48px}
+.app{width:100%;max-width:900px;background:linear-gradient(180deg,#fff,#fefefe);border-radius:var(--radius);box-shadow:0 10px 30px rgba(15,23,42,0.08);overflow:hidden}
+.app-header{padding:24px 28px 6px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;gap:12px;align-items:center}
+.brand h1{margin:0;font-size:20px}
+.subtitle{margin:6px 0 0;color:var(--muted);font-size:13px}
+.controls{padding:12px 28px 0;display:flex;flex-direction:column;gap:12px}
+.todo-form{display:flex;gap:12px}
+.todo-form input{flex:1;padding:12px;border-radius:8px;border:1px solid #e6e9ee;font-size:15px}
+.btn-primary{background:var(--accent);color:#fff;border:none;padding:10px 16px;border-radius:8px;cursor:pointer}
+.btn-primary:disabled{opacity:0.6;cursor:not-allowed}
+.filters{display:flex;gap:8px}
+.filter{background:transparent;border:1px solid transparent;padding:6px 10px;border-radius:8px;cursor:pointer;color:var(--muted)}
+.filter.active{background:#eef2ff;border-color:transparent;color:var(--accent)}
+.content{padding:12px 28px 28px}
+.banner{padding:10px;border-radius:8px;margin-bottom:12px;background:#fff;display:none}
+.banner.show{display:block}
+.loader{height:4px;background:linear-gradient(90deg,#e2e8f0,#c7d2fe);border-radius:999px;margin-bottom:12px}
+.todo-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+.todo-item{display:flex;align-items:center;gap:12px;padding:12px;background:var(--card);border-radius:8px;border:1px solid #f1f5f9}
+.checkbox{display:inline-flex;align-items:center}
+.checkbox input{width:20px;height:20px}
+.title-wrap{flex:1;display:flex;flex-direction:column}
+.title{font-size:15px}
+.title.done{color:var(--muted);text-decoration:line-through}
+.title-edit{display:none;padding:8px;border-radius:6px;border:1px solid #e6e9ee}
+.actions{display:flex;gap:8px}
+.actions button{background:transparent;border:1px solid transparent;padding:6px 8px;border-radius:6px;cursor:pointer}
+.actions .edit{color:var(--accent)}
+.actions .delete{color:var(--danger)}
+.empty{text-align:center;color:var(--muted);padding:24px}
+.footer{padding:12px 28px 20px;color:var(--muted);font-size:13px}
+
+@media (max-width:600px){
+	.app{padding:0}
+	.app-header{padding:18px}
+	.controls{padding:8px 18px}
+	.content{padding:8px 18px}
+}
