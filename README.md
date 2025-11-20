@@ -1,4 +1,4 @@
-# Todo App — Serverless (DynamoDB, Lambda, API Gateway, S3)
+# TaskMatrix
 
 This repository contains a small Todo application implemented with AWS serverless components:
 
@@ -45,4 +45,4 @@ Security
 - This example enables public read on the website bucket (for demo only). For production, use CloudFront + OAI and consider locking down permissions.
 
 If you want, I can: deploy to your account (requires your AWS credentials/config in this environment) or run a local test harness for the Lambda handlers.
-# TaskMatrix
+
